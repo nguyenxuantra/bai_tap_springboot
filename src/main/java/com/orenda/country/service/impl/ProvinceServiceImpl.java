@@ -1,6 +1,7 @@
 package com.orenda.country.service.impl;
 
 import com.orenda.country.common.pageResponse.PageResponse;
+import com.orenda.country.common.repository.spec.SpecificationBuilder;
 import com.orenda.country.dto.request.ProvinceRequest;
 import com.orenda.country.dto.response.ProvinceResponse;
 import com.orenda.country.entity.Provinces;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,7 +65,11 @@ public class ProvinceServiceImpl implements ProvinceService {
     public PageResponse<ProvinceResponse> getAllProvince(String search, int pageNumber, int pageSize, String sortBy, String sortDir){
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize, sort);
-        Page<Provinces> provincesPage = provinceRepository.findAll(ProvinceSpecification.searchAllFiels(search),pageable);
+        SpecificationBuilder<Provinces> builder = SpecificationBuilder.builder();
+        builder.searchAll("code", search)
+                .searchAll("name", search);
+        Specification<Provinces> spect = builder.buildOr();
+        Page<Provinces> provincesPage = provinceRepository.findAll(spect,pageable);
         List<ProvinceResponse> provincesList = provinceMapper.toListProvinceResponse(provincesPage.getContent());
         return PageResponse.<ProvinceResponse>builder()
                 .content(provincesList)

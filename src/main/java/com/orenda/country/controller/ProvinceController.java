@@ -6,6 +6,7 @@ import com.orenda.country.dto.request.ProvinceRequest;
 import com.orenda.country.dto.response.ProvinceResponse;
 import com.orenda.country.service.ProvinceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,6 +32,7 @@ public class ProvinceController {
                 .result(provinceService.updateProvince(request, provinceId))
                 .build();
     }
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{provinceId}")
     ApiResponse<ProvinceResponse> getProvince(@PathVariable int provinceId){
         return ApiResponse.<ProvinceResponse>builder()
@@ -40,6 +42,7 @@ public class ProvinceController {
                 .build();
 
     }
+
     @DeleteMapping("/{provinceId}")
     ApiResponse<Void> deleteProvince(@PathVariable int provinceId){
         provinceService.deleteProvince(provinceId);
@@ -48,6 +51,7 @@ public class ProvinceController {
                 .message("delete province success")
                 .build();
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     ApiResponse<PageResponse<ProvinceResponse>> getAllProvince(
             @RequestParam(name = "search", required = false, defaultValue = "")String search,
