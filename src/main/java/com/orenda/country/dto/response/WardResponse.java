@@ -12,4 +12,5 @@ public class WardResponse {
     private String name;
     private String code;
     private String provinceCode;
+    private String provinceName;
 }

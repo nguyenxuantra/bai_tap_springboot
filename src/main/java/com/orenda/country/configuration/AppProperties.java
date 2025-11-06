@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Configuration
 @ConfigurationProperties(prefix = "app")
-
 public class AppProperties {
     private final Jwt jwt = new Jwt();
 

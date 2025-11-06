@@ -7,14 +7,21 @@ import com.orenda.country.dto.request.WardRequest;
 import com.orenda.country.dto.response.WardResponse;
 import com.orenda.country.service.WardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/ward")
 @RequiredArgsConstructor
 public class WardController {
     private final WardService wardService;
+    private final MessageSource messageSource;
 
+    @PreAuthorize("hasAuthority('CREATE_WARD')")
     @PostMapping
     ApiResponse<WardResponse> createWard(@RequestBody WardRequest wardRequest){
         return ApiResponse.<WardResponse>builder()
@@ -23,6 +30,7 @@ public class WardController {
                 .result(wardService.createWard(wardRequest))
                 .build();
     }
+    @PreAuthorize("hasAuthority('UPDATE_WARD')")
     @PutMapping("/{wardId}")
     ApiResponse<WardResponse> updateWard(@RequestBody WardRequest wardRequest, @PathVariable int wardId){
         return ApiResponse.<WardResponse>builder()
@@ -31,6 +39,7 @@ public class WardController {
                 .result(wardService.updateWard(wardRequest, wardId))
                 .build();
     }
+    @PreAuthorize("hasAuthority('DELETE_WARD')")
     @DeleteMapping("/{wardId}")
     ApiResponse<Void> deleteWard(@PathVariable int wardId){
         wardService.deleteWard(wardId);
@@ -39,14 +48,17 @@ public class WardController {
                 .message("Ward deleted successfully")
                 .build();
     }
+    @PreAuthorize("hasAuthority('GET_WARD')")
     @GetMapping("/{wardId}")
     ApiResponse<WardResponse> getWard(@PathVariable int wardId){
+        String message = messageSource.getMessage("get.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<WardResponse>builder()
                 .code(200)
-                .message("Ward get successfully")
+                .message(message)
                 .result(wardService.getWard(wardId))
                 .build();
     }
+    @PreAuthorize("hasAuthority('GET_WARDS')")
     @GetMapping
     ApiResponse<PageResponse<WardResponse>> getWards(
             @RequestParam(name = "search", required = false, defaultValue="")String search,

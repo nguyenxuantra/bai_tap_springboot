@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProvinceController {
     private final ProvinceService provinceService;
+
+    @PreAuthorize("hasAuthority('CREATE_PROVINCE')")
     @PostMapping
     ApiResponse<ProvinceResponse> createProvince(@RequestBody ProvinceRequest request){
         return ApiResponse.<ProvinceResponse>builder()
@@ -22,6 +24,7 @@ public class ProvinceController {
                 .message("create province success")
                 .build();
     }
+    @PreAuthorize("hasAuthority('UPDATE_PROVINCE')")
     @PutMapping("/{provinceId}")
     ApiResponse<ProvinceResponse> updateProvince(
             @PathVariable int provinceId,
@@ -32,7 +35,7 @@ public class ProvinceController {
                 .result(provinceService.updateProvince(request, provinceId))
                 .build();
     }
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('GET_PROVINCE')")
     @GetMapping("/{provinceId}")
     ApiResponse<ProvinceResponse> getProvince(@PathVariable int provinceId){
         return ApiResponse.<ProvinceResponse>builder()
@@ -43,6 +46,7 @@ public class ProvinceController {
 
     }
 
+    @PreAuthorize("hasAuthority('DELETE_PROVINCE')")
     @DeleteMapping("/{provinceId}")
     ApiResponse<Void> deleteProvince(@PathVariable int provinceId){
         provinceService.deleteProvince(provinceId);
@@ -51,7 +55,7 @@ public class ProvinceController {
                 .message("delete province success")
                 .build();
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('GET_ALL_PROVINCE')")
     @GetMapping
     ApiResponse<PageResponse<ProvinceResponse>> getAllProvince(
             @RequestParam(name = "search", required = false, defaultValue = "")String search,

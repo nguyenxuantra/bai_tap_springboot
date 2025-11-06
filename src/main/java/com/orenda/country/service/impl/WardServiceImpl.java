@@ -4,6 +4,7 @@ package com.orenda.country.service.impl;
 import com.orenda.country.common.pageResponse.PageResponse;
 import com.orenda.country.dto.request.WardRequest;
 import com.orenda.country.dto.response.WardResponse;
+import com.orenda.country.entity.Provinces;
 import com.orenda.country.entity.Wards;
 import com.orenda.country.exception.AppException;
 import com.orenda.country.exception.ErrorCode;
@@ -22,6 +23,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +78,22 @@ public class WardServiceImpl implements WardService {
         Pageable pageable = PageRequest.of(pageNumber -1, pageSize, sort);
         Specification<Wards> spec = Specification.allOf(WardSpecification.searchAll(search), WardSpecification.filterProvinceCode(provinceCode));
         Page<Wards> pageWards = wardRepository.findAll(spec, pageable);
-        List<WardResponse> listWards = wardMapper.toListWard(pageWards.getContent());
+        // lấy toàn bộ provinceCode có trong wards hiện tại
+        Set<String> provinceCodes= pageWards.stream().map(Wards::getProvinceCode
+        ).collect(Collectors.toSet());
+        // lấy danh sách cách province
+        List<Provinces> provinces = provinceRepository.findByCodeIn(provinceCodes);
+        // Tạo map
+        Map<String, String> provinceMap = provinces.stream().collect(Collectors.toMap(Provinces::getCode, Provinces::getName));
+        List<WardResponse> listWards = pageWards.stream().map(wards ->{
+            return WardResponse.builder()
+                    .id(wards.getId())
+                    .name(wards.getName())
+                    .code(wards.getCode())
+                    .provinceCode(wards.getProvinceCode())
+                    .provinceName(provinceMap.get(wards.getProvinceCode()))
+                    .build();
+        }).collect(Collectors.toList());
         return PageResponse.<WardResponse>builder()
                 .content(listWards)
                 .pageSize(pageWards.getSize())

@@ -9,4 +9,8 @@
     <include file="db/changelog/v1.0/001-create-province-table.xml"/>
     <include file="/db/changelog/v1.0/001-create-ward-table.xml"/>
     <include file="db/changelog/v1.0/001-create-table-user.xml"/>
+    <include file="db/changelog/v1.0/001-create-table-role.xml"/>
+    <include file="db/changelog/v1.0/001-create-table-user-role.xml"/>
+    <include file="db/changelog/v1.0/001-create-table-permissions.xml"/>
+    <include file="db/changelog/v1.0/001-create-table-role-permission.xml"/>
 </databaseChangeLog>

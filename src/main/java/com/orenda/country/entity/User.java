@@ -1,5 +1,6 @@
 package com.orenda.country.entity;
 
+import com.orenda.country.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,12 +28,19 @@ public class User implements UserDetails {
     private String username;
     @Column(name = "password")
     private String password;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role;
+    private Role role;
+
+    @Transient
+    private List<String> permission;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        return permission.stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 
     @Override
@@ -49,6 +57,4 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
-
 }

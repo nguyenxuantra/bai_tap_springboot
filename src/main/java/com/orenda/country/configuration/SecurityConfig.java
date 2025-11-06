@@ -26,7 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -49,7 +48,5 @@ public class SecurityConfig {
     }
     @Bean
     public PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();}
-    
-    @Bean
-    public UserDetailsService userDetailsService(){return userDetailsService;}
+
 }

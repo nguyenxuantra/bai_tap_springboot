@@ -18,6 +18,8 @@ public enum ErrorCode {
     NOT_FOUND(1012, "Không tìm thấy",  HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(1013, "Không tìm thấy người dùng đăng nhập", HttpStatus.NOT_FOUND),
     INVALID_CREDENTIALS(1014, "Tài khoản và mật khẩu không chính xác", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_ROUND(1015, "Không tìm thấy quyền này", HttpStatus.NOT_FOUND),
+    USERNAME_EXISTED(1016, "Username đã tồn tại", HttpStatus.CONFLICT),
     ;
     private final int code;
     private final String message;
