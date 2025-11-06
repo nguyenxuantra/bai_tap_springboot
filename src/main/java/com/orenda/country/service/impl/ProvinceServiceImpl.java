@@ -14,6 +14,8 @@ import com.orenda.country.service.ProvinceService;
 import com.orenda.country.specification.ProvinceSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +31,9 @@ public class ProvinceServiceImpl implements ProvinceService {
     private final ProvinceRepository provinceRepository;
     private final ProvinceMapper provinceMapper;
     private final WardRepository wardRepository;
+
     @Override
+    @CacheEvict(value = "provinceDropdown", allEntries = true)
     public ProvinceResponse createProvince(ProvinceRequest request){
         if(provinceRepository.existsByCode(request.getCode())){
             throw new AppException(ErrorCode.CODE_EXISTED);
@@ -40,6 +44,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
     @Override
     @Transactional
+    @CacheEvict(value = "provinceDropdown", allEntries = true)
     public ProvinceResponse updateProvince(ProvinceRequest request, int provinceId){
         Provinces province = provinceRepository.findById(provinceId).orElseThrow(()-> new AppException(ErrorCode.PROVINCE_NOT_FOUND));
         if(provinceRepository.existsByCodeAndIdNot(request.getCode(), provinceId)) {
@@ -54,6 +59,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         return provinceMapper.toResponse(provinces);
     }
     @Override
+    @CacheEvict(value = "provinceDropdown", allEntries = true)
     public void deleteProvince(int provinceId){
         Provinces provinces = provinceRepository.findById(provinceId).orElseThrow(()-> new AppException(ErrorCode.PROVINCE_NOT_FOUND));
         if(wardRepository.existsByProvinceCode(provinces.getCode())){
@@ -62,6 +68,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         provinceRepository.deleteById(provinceId);
     }
     @Override
+    @Cacheable(value = "provinceDropdown")
     public PageResponse<ProvinceResponse> getAllProvince(String search, int pageNumber, int pageSize, String sortBy, String sortDir){
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize, sort);

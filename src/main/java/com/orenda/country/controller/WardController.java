@@ -24,28 +24,31 @@ public class WardController {
     @PreAuthorize("hasAuthority('CREATE_WARD')")
     @PostMapping
     ApiResponse<WardResponse> createWard(@RequestBody WardRequest wardRequest){
+        String message = messageSource.getMessage("create.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<WardResponse>builder()
                 .code(200)
-                .message("Ward created successfully")
+                .message(message)
                 .result(wardService.createWard(wardRequest))
                 .build();
     }
     @PreAuthorize("hasAuthority('UPDATE_WARD')")
     @PutMapping("/{wardId}")
     ApiResponse<WardResponse> updateWard(@RequestBody WardRequest wardRequest, @PathVariable int wardId){
+        String message = messageSource.getMessage("put.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<WardResponse>builder()
                 .code(200)
-                .message("Ward updated successfully")
+                .message(message)
                 .result(wardService.updateWard(wardRequest, wardId))
                 .build();
     }
     @PreAuthorize("hasAuthority('DELETE_WARD')")
     @DeleteMapping("/{wardId}")
     ApiResponse<Void> deleteWard(@PathVariable int wardId){
+        String message = messageSource.getMessage("delete.success", null, LocaleContextHolder.getLocale());
         wardService.deleteWard(wardId);
         return ApiResponse.<Void>builder()
                 .code(200)
-                .message("Ward deleted successfully")
+                .message(message)
                 .build();
     }
     @PreAuthorize("hasAuthority('GET_WARD')")
@@ -67,9 +70,10 @@ public class WardController {
             @RequestParam(name = "page_size", required = false, defaultValue = "5")int pageSize,
             @RequestParam(name = "sort_by", required =false, defaultValue = "id")String sortBy,
             @RequestParam(name = "sort_dir", required = false, defaultValue = "desc")String sortDir){
+        String message = messageSource.getMessage("get.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<PageResponse<WardResponse>>builder()
                 .code(200)
-                .message("get wards success")
+                .message(message)
                 .result(wardService.getWards(search, provinceCode, pageNumber, pageSize, sortBy, sortDir))
                 .build();
     }

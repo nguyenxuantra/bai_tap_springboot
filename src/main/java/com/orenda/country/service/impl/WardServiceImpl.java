@@ -15,6 +15,8 @@ import com.orenda.country.service.WardService;
 import com.orenda.country.specification.WardSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,7 @@ public class WardServiceImpl implements WardService {
     private final WardMapper wardMapper;
 
     @Override
+    @CacheEvict(value = "wardDropdown", allEntries = true)
     public WardResponse createWard(WardRequest request) {
         if (wardRepository.existsByCode(request.getCode())) {
             throw new AppException(ErrorCode.CODE_EXISTED);
@@ -50,6 +53,7 @@ public class WardServiceImpl implements WardService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "wardDropdown", allEntries = true)
     public WardResponse updateWard(WardRequest request, int wardId){
         if (wardRepository.existsByCodeAndIdNot(request.getCode(), wardId)) {
             throw new AppException(ErrorCode.CODE_EXISTED);
@@ -63,6 +67,7 @@ public class WardServiceImpl implements WardService {
     }
 
     @Override
+    @CacheEvict(value = "wardDropdown", allEntries = true)
     public void deleteWard(int wardId) {
         wardRepository.findById(wardId).orElseThrow(()-> new AppException(ErrorCode.WARD_NOT_FOUND));
         wardRepository.deleteById(wardId);
@@ -73,6 +78,7 @@ public class WardServiceImpl implements WardService {
         return wardMapper.toResponse(wards);
     }
     @Override
+    @Cacheable(value = "wardsDropdown")
     public PageResponse<WardResponse> getWards(String search, String provinceCode, int pageNumber, int pageSize, String sortBy, String sortDir){
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(pageNumber -1, pageSize, sort);

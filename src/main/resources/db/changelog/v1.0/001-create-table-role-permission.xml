@@ -28,64 +28,64 @@
 
     <changeSet id="003" author="developer" context="dev,test,prod">
         <!-- Quyền của USER -->
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="1"/>
             <column name="permission_id" valueNumeric="4"/> <!-- GET_WARD -->
         </insert>
 
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="1"/>
             <column name="permission_id" valueNumeric="5"/> <!-- GET_WARDS -->
         </insert>
 
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="1"/>
             <column name="permission_id" valueNumeric="8"/> <!-- GET_PROVINCE -->
         </insert>
 
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="1"/>
             <column name="permission_id" valueNumeric="10"/> <!-- GET_ALL_PROVINCE -->
         </insert>
 
         <!-- Quyền của ADMIN -->
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="1"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="2"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="3"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="4"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="5"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="6"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="7"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="8"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="9"/>
         </insert>
-        <insert tableName="role-permission">
+        <insert tableName="role_permission">
             <column name="role_id" valueNumeric="2"/>
             <column name="permission_id" valueNumeric="10"/>
         </insert>

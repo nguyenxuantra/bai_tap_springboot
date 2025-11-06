@@ -6,6 +6,8 @@ import com.orenda.country.dto.request.ProvinceRequest;
 import com.orenda.country.dto.response.ProvinceResponse;
 import com.orenda.country.service.ProvinceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +16,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProvinceController {
     private final ProvinceService provinceService;
+    private final MessageSource messageSource;
 
     @PreAuthorize("hasAuthority('CREATE_PROVINCE')")
     @PostMapping
     ApiResponse<ProvinceResponse> createProvince(@RequestBody ProvinceRequest request){
+        String message = messageSource.getMessage("create.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<ProvinceResponse>builder()
                 .code(200)
                 .result(provinceService.createProvince(request))
-                .message("create province success")
+                .message(message)
                 .build();
     }
     @PreAuthorize("hasAuthority('UPDATE_PROVINCE')")
@@ -29,18 +33,20 @@ public class ProvinceController {
     ApiResponse<ProvinceResponse> updateProvince(
             @PathVariable int provinceId,
             @RequestBody ProvinceRequest request){
+        String message = messageSource.getMessage("put.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<ProvinceResponse>builder()
                 .code(200)
-                .message("update province success")
+                .message(message)
                 .result(provinceService.updateProvince(request, provinceId))
                 .build();
     }
     @PreAuthorize("hasAuthority('GET_PROVINCE')")
     @GetMapping("/{provinceId}")
     ApiResponse<ProvinceResponse> getProvince(@PathVariable int provinceId){
+        String message = messageSource.getMessage("get.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<ProvinceResponse>builder()
                 .code(200)
-                .message("get province success")
+                .message(message)
                 .result(provinceService.getDetailProvince(provinceId))
                 .build();
 
@@ -49,10 +55,11 @@ public class ProvinceController {
     @PreAuthorize("hasAuthority('DELETE_PROVINCE')")
     @DeleteMapping("/{provinceId}")
     ApiResponse<Void> deleteProvince(@PathVariable int provinceId){
+        String message = messageSource.getMessage("delete.success", null, LocaleContextHolder.getLocale());
         provinceService.deleteProvince(provinceId);
         return ApiResponse.<Void>builder()
                 .code(200)
-                .message("delete province success")
+                .message(message)
                 .build();
     }
     @PreAuthorize("hasAuthority('GET_ALL_PROVINCE')")
@@ -63,9 +70,10 @@ public class ProvinceController {
             @RequestParam(name = "page_size", required = false, defaultValue ="5")Integer pageSize,
             @RequestParam(name = "sort_by", required = false, defaultValue="id")String sortBy,
             @RequestParam(name = "sort_dir", required = false, defaultValue="desc")String sortDir){
+        String message = messageSource.getMessage("get.success", null, LocaleContextHolder.getLocale());
         return ApiResponse.<PageResponse<ProvinceResponse>>builder()
                 .code(200)
-                .message("get all provinces")
+                .message(message)
                 .result(provinceService.getAllProvince(search, pageNumber, pageSize, sortBy, sortDir))
                 .build();
     }
