@@ -2,6 +2,7 @@ package com.orenda.country.service.impl;
 
 import com.orenda.country.common.pageResponse.PageResponse;
 import com.orenda.country.common.repository.spec.SpecificationBuilder;
+import com.orenda.country.configuration.RedisConfig;
 import com.orenda.country.dto.request.ProvinceRequest;
 import com.orenda.country.dto.response.ProvinceResponse;
 import com.orenda.country.entity.Provinces;
@@ -16,11 +17,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.connection.RedisClusterConnection;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisSentinelConnection;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +37,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     private final ProvinceRepository provinceRepository;
     private final ProvinceMapper provinceMapper;
     private final WardRepository wardRepository;
+    private final RedisConfig redisConfig;
 
     @Override
     @CacheEvict(value = "provinceDropdown", allEntries = true)
@@ -50,6 +57,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         if(provinceRepository.existsByCodeAndIdNot(request.getCode(), provinceId)) {
             throw new AppException(ErrorCode.CODE_EXISTED);
         }
+
         provinceMapper.updateProvince(request, province);
         return provinceMapper.toResponse(province);
     }
@@ -68,8 +76,9 @@ public class ProvinceServiceImpl implements ProvinceService {
         provinceRepository.deleteById(provinceId);
     }
     @Override
-    @Cacheable(value = "provinceDropdown")
+    @Cacheable(value = "provinceDropdown", key = "#search + '_' + #pageNumber + '_' + #pageSize + '_' + #sortBy + '_' + #sortDir")
     public PageResponse<ProvinceResponse> getAllProvince(String search, int pageNumber, int pageSize, String sortBy, String sortDir){
+
         Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize, sort);
         SpecificationBuilder<Provinces> builder = SpecificationBuilder.builder();

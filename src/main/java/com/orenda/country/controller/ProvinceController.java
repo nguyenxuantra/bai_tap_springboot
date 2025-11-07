@@ -6,6 +6,7 @@ import com.orenda.country.dto.request.ProvinceRequest;
 import com.orenda.country.dto.response.ProvinceResponse;
 import com.orenda.country.service.ProvinceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,17 +65,19 @@ public class ProvinceController {
     }
     @PreAuthorize("hasAuthority('GET_ALL_PROVINCE')")
     @GetMapping
-    ApiResponse<PageResponse<ProvinceResponse>> getAllProvince(
+    public ApiResponse<PageResponse<ProvinceResponse>> getAllProvince(
             @RequestParam(name = "search", required = false, defaultValue = "")String search,
             @RequestParam(name = "page_number", required = false, defaultValue = "1") Integer pageNumber,
             @RequestParam(name = "page_size", required = false, defaultValue ="5")Integer pageSize,
             @RequestParam(name = "sort_by", required = false, defaultValue="id")String sortBy,
             @RequestParam(name = "sort_dir", required = false, defaultValue="desc")String sortDir){
         String message = messageSource.getMessage("get.success", null, LocaleContextHolder.getLocale());
+
+        var a = provinceService.getAllProvince(search, pageNumber, pageSize, sortBy, sortDir);
         return ApiResponse.<PageResponse<ProvinceResponse>>builder()
                 .code(200)
                 .message(message)
-                .result(provinceService.getAllProvince(search, pageNumber, pageSize, sortBy, sortDir))
+                .result(a)
                 .build();
     }
 }
