@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: country
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mynet
+  redis:
+    image: redis:7-alpine
+    container_name: redis_container
+    command: redis-server
+    ports:
+      - "6379:6379"
+    networks:
+      - mynet
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    container_name: springboot_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/country
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: 123456
+      # JPA config
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: true
+      #Liquibase config
+      SPRING_LIQUIBASE_CHANGE_LOG: classpath:db/changelog/db.changelog-master.xml
+      # JWT config
+      APP_JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      APP_JWT_EXPIRATION: 86400000
+      APP_JWT_REFRESH_EXPIRATION: 604800000
+      #Redis config
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: 123456
+      SPRING_DATA_REDIS_DATABASE: 0
+    networks:
+      - mynet
+networks:
+  mynet:
+
+volumes:
+  mysql_data:
